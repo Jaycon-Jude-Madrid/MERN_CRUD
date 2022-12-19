@@ -20,7 +20,6 @@ const Home = () => {
     if (res.ok) {
       dispatch({ type: "SET_WORKOUTS", payload: val });
     }
-    console.log(res.ok);
   };
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const Home = () => {
       <div className="workouts">
         <div className="Workout-details">
           {state.workouts?.map((item: ItemProps, index: any) => (
-            <WorkoutDetails key={index} item={item} />
+            <WorkoutDetails key={index} item={item} fetchData={fetchData} />
           ))}
         </div>{" "}
         <div className="Workouts-form">

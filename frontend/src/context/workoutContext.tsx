@@ -20,11 +20,18 @@ const initialState: stateType = {
 const reducer = (currentState: stateType, action: actionType) => {
   switch (action.type) {
     case "SET_WORKOUTS":
-      return { ...currentState, workouts: action.payload };
+      return { workouts: action.payload };
     case "CREATE_WORKOUT":
       return {
         workouts: [action.payload, ...currentState.workouts],
       };
+    case "DELETE_WORKOUTS":
+      return {
+        workouts: currentState.workouts.filter(
+          (w: any) => w._id !== action.payload._id
+        ),
+      };
+
     default:
       return currentState;
   }
