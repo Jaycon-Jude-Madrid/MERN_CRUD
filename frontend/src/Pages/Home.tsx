@@ -24,7 +24,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>

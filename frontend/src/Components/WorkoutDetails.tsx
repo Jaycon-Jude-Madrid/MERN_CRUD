@@ -5,7 +5,7 @@ interface ItemProps {
   fetchData: () => void;
 }
 const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
-  const { dispatch } = useWorkoutsContext();
+  const { dispatch, setEdit, edit } = useWorkoutsContext();
 
   let createdDate = new Date(item.createdAt).toUTCString();
   createdDate = createdDate.split(" ").slice(0, 4).join(" ");
@@ -21,7 +21,15 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
 
     if (response.ok) {
       dispatch({ type: "DELETE_WORKOUTS", payload: jason });
+      setEdit({ title: "", load: "", reps: "" });
     }
+  };
+
+  const editData = async () => {
+    const data = {
+      item,
+    };
+    setEdit(data);
   };
 
   return (
@@ -37,6 +45,7 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
       </p>
       <p>{`${String(createdDate)}`}</p>
       <span onClick={deleteData}> Delete</span>
+      <button onClick={editData}> Edit</button>
     </div>
   );
 };

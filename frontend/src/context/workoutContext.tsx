@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useReducer, useState } from "react";
 
 type ThemeContextProviderProps = {
   children: React.ReactNode;
@@ -42,9 +42,11 @@ export const WorkoutsContext = createContext<any>(null);
 export const WorksoutContextProvider = ({
   children,
 }: ThemeContextProviderProps) => {
+  const [edit, setEdit] = useState<any>(null);
+
   const [state, dispatch] = useReducer<any>(reducer, initialState);
   return (
-    <WorkoutsContext.Provider value={{ state, dispatch }}>
+    <WorkoutsContext.Provider value={{ state, dispatch, edit, setEdit }}>
       {children}
     </WorkoutsContext.Provider>
   );

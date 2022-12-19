@@ -6,11 +6,9 @@ import { BrowserRouter } from "react-router-dom";
 import { WorksoutContextProvider } from "./context/workoutContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <WorksoutContextProvider>
-        <App />
-      </WorksoutContextProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter>
+    <WorksoutContextProvider>
+      <App />
+    </WorksoutContextProvider>
+  </BrowserRouter>
 );
