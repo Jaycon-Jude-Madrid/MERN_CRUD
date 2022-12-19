@@ -65,10 +65,12 @@ const WorkoutForm = () => {
     });
     const json = await response.json();
 
-    console.log(response);
-    setValues(initialValues);
-    setEdit(null);
-    console.log(json);
+    if (response.ok) {
+      setValues(initialValues);
+      setEdit(null);
+      console.log(json);
+      return json;
+    }
   };
 
   useEffect(() => {
