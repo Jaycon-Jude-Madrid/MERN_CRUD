@@ -1,3 +1,5 @@
+// NPM install mongoose dotenv cors nodemon express
+
 require("dotenv").config();
 
 const express = require("express");
