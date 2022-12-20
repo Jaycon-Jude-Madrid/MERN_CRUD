@@ -65,11 +65,15 @@ const WorkoutForm = () => {
     });
     const json = await response.json();
 
-    if (response.ok) {
-      setValues(initialValues);
-      setEdit(null);
-      console.log(json);
-      return json;
+    if (!values.title) {
+      alert("Please fill out fields");
+    } else {
+      if (response.ok) {
+        setValues(initialValues);
+        setEdit(null);
+        console.log(json);
+        return json;
+      }
     }
   };
 
@@ -80,6 +84,8 @@ const WorkoutForm = () => {
         load: edit?.item?.load,
         reps: edit?.item?.reps,
       });
+    } else {
+      setValues(initialValues);
     }
   }, [edit]);
 

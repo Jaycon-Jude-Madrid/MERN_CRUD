@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 interface ItemProps {
   item: any;
   fetchData: () => void;
 }
 const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
+  const [editCancel, setCancelEdit] = useState<boolean>(true);
   const { dispatch, setEdit, edit } = useWorkoutsContext();
 
   let createdDate = new Date(item.createdAt).toUTCString();
@@ -30,8 +31,13 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
       item,
     };
     setEdit(data);
+    setCancelEdit(false);
   };
 
+  const cancelEdit = () => {
+    setEdit(null);
+    setCancelEdit(!editCancel);
+  };
   return (
     <div className="workout-details">
       <h4>{item.title}</h4>
@@ -45,7 +51,38 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
       </p>
       <p>{`${String(createdDate)}`}</p>
       <span onClick={deleteData}> Delete</span>
-      <button onClick={editData}> Edit</button>
+      {editCancel ? (
+        <button
+          onClick={editData}
+          style={{
+            color: "green",
+            padding: "10px",
+            width: "100px",
+            border: "none",
+            marginTop: "20px",
+            cursor: "pointer",
+          }}
+        >
+          {" "}
+          Edit
+        </button>
+      ) : (
+        <button
+          onClick={cancelEdit}
+          style={{
+            color: "red",
+
+            padding: "10px",
+            width: "100px",
+            border: "none",
+            marginTop: "20px",
+            cursor: "pointer",
+          }}
+        >
+          {" "}
+          Cancel
+        </button>
+      )}
     </div>
   );
 };
