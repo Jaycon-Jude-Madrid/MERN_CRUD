@@ -12,7 +12,7 @@ interface ItemProps {
   __v?: string;
 }
 const Home = () => {
-  const { state, dispatch } = useWorkoutsContext();
+  const { state, dispatch ,edit} = useWorkoutsContext();
 
   const fetchData = async () => {
     const res = await fetch("http://localhost:4000/api/workouts/");
@@ -24,7 +24,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-  }, [dispatch]);
+  }, [dispatch,edit]);
 
   return (
     <div>

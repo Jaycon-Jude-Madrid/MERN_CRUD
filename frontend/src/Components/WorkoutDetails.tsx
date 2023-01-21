@@ -5,8 +5,7 @@ interface ItemProps {
   fetchData: () => void;
 }
 const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
-  const [editCancel, setCancelEdit] = useState<boolean>(true);
-  const { dispatch, setEdit, edit } = useWorkoutsContext();
+  const { dispatch, setEdit, editCancel, setCancelEdit } = useWorkoutsContext();
 
   let createdDate = new Date(item.createdAt).toUTCString();
   createdDate = createdDate.split(" ").slice(0, 4).join(" ");
@@ -22,8 +21,10 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
 
     if (response.ok) {
       dispatch({ type: "DELETE_WORKOUTS", payload: jason });
-      setEdit({ title: "", load: "", reps: "" });
+      setEdit(null);
+ 
     }
+    
   };
 
   const editData = async () => {
@@ -31,7 +32,7 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
       item,
     };
     setEdit(data);
-    setCancelEdit(false);
+    setCancelEdit(!editCancel);
   };
 
   const cancelEdit = () => {
@@ -51,8 +52,8 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
       </p>
       <p>{`${String(createdDate)}`}</p>
       <span onClick={deleteData}> Delete</span>
-      {editCancel ? (
-        <button
+     
+     {editCancel ? <button
           onClick={editData}
           style={{
             color: "green",
@@ -65,24 +66,25 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
         >
           {" "}
           Edit
-        </button>
-      ) : (
+        </button> :   
         <button
-          onClick={cancelEdit}
-          style={{
-            color: "red",
+      onClick={cancelEdit}
+      style={{
+        color: "red",
 
-            padding: "10px",
-            width: "100px",
-            border: "none",
-            marginTop: "20px",
-            cursor: "pointer",
-          }}
-        >
-          {" "}
-          Cancel
-        </button>
-      )}
+        padding: "10px",
+        width: "100px",
+        border: "none",
+        marginTop: "20px",
+        cursor: "pointer",
+      }}
+    >
+      {" "}
+      Cancel
+    </button> }
+        
+    
+  
     </div>
   );
 };

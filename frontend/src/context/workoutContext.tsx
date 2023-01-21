@@ -31,7 +31,10 @@ const reducer = (currentState: stateType, action: actionType) => {
           (w: any) => w._id !== action.payload._id
         ),
       };
-
+      case "UPDATE_WORKOUTS":
+        return {
+          workouts: [action.payload, ...currentState.workouts],
+        };
     default:
       return currentState;
   }
@@ -43,10 +46,11 @@ export const WorksoutContextProvider = ({
   children,
 }: ThemeContextProviderProps) => {
   const [edit, setEdit] = useState<any>(null);
+  const [editCancel, setCancelEdit] = useState<boolean>(true);
 
   const [state, dispatch] = useReducer<any>(reducer, initialState);
   return (
-    <WorkoutsContext.Provider value={{ state, dispatch, edit, setEdit }}>
+    <WorkoutsContext.Provider value={{ state, dispatch, edit, setEdit ,editCancel, setCancelEdit}}>
       {children}
     </WorkoutsContext.Provider>
   );

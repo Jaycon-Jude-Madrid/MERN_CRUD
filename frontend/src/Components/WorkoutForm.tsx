@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
 interface FormProps {
@@ -14,9 +14,10 @@ const initialValues = {
 };
 
 const WorkoutForm = () => {
-  const { edit, dispatch, setEdit } = useWorkoutsContext();
+  const { edit, dispatch, setEdit ,setCancelEdit} = useWorkoutsContext();
 
   const [values, setValues] = useState<FormProps>(initialValues);
+
   const [error, setError] = useState<any>(null);
   const [emptyFields, setEmptyFields] = useState<any>([]);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +29,6 @@ const WorkoutForm = () => {
   };
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
     const workouts = { ...values };
     const response = await fetch("http://localhost:4000/api/workouts/", {
       method: "POST",
@@ -52,8 +52,10 @@ const WorkoutForm = () => {
 
       dispatch({ type: "CREATE_WORKOUT", payload: json });
     }
+   
   };
-  const handleEdit = async () => {
+  const handleEdit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
     const id = edit?.item?._id;
     const workouts = { ...values };
     const response = await fetch(`http://localhost:4000/api/workouts/${id}`, {
@@ -65,16 +67,21 @@ const WorkoutForm = () => {
     });
     const json = await response.json();
 
-    if (!values.title) {
-      alert("Please fill out fields");
+    if(!values.title || !values.reps || !values.load){
+      alert('Please input')
+
     } else {
       if (response.ok) {
         setValues(initialValues);
-        setEdit(null);
-        console.log(json);
+        setEdit(null)
+        setCancelEdit(true)
+        
         return json;
-      }
+      
     }
+     
+    }
+   
   };
 
   useEffect(() => {
@@ -87,7 +94,7 @@ const WorkoutForm = () => {
     } else {
       setValues(initialValues);
     }
-  }, [edit]);
+  }, [edit ]);
 
   return (
     <form className="create">
@@ -123,11 +130,11 @@ const WorkoutForm = () => {
         <button type="submit" onClick={handleEdit}>
           Update
         </button>
-      ) : (
-        <button type="submit" onClick={handleSubmit}>
-          Submit
-        </button>
-      )}
+      ) : !edit ?  <button type="submit" onClick={handleSubmit}>
+      Submit
+    </button>: null
+       
+      }
       {error && <div className="error">{error}</div>}
     </form>
   );
