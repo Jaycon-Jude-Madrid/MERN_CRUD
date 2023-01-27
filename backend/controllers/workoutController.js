@@ -1,11 +1,14 @@
 const Workout = require("../models/workoutModel");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 //GET all data
 
 const getWorkouts = async (req, res) => {
-  const workouts = await Workout.find({}).sort({ createdAt: -1 });
 
+  const user_id = req.user._id;
+
+  const workouts = await Workout.find({user_id}).sort({ createdAt: -1 });
   res.status(200).json(workouts);
 };
 
@@ -48,7 +51,9 @@ const createWorkout = async (req, res) => {
   }
   //Add doc to DB collection
   try {
-    const workout = await Workout.create({ title, load, reps });
+
+    const user_id = req.user._id;
+    const workout = await Workout.create({ title, load, reps, user_id });
     res.status(200).json(workout);
   } catch (error) {
     res.status(400).json({ error: error.message });

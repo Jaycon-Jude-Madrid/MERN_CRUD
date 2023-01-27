@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
 interface FormProps {
@@ -14,7 +15,8 @@ const initialValues = {
 };
 
 const WorkoutForm = () => {
-  const { edit, dispatch, setEdit ,setCancelEdit} = useWorkoutsContext();
+  const { edit, dispatch, setEdit,setToggleEdit ,toggleEdit} = useWorkoutsContext();
+  const {stateAuth} = useAuthContext();
 
   const [values, setValues] = useState<FormProps>(initialValues);
 
@@ -29,12 +31,17 @@ const WorkoutForm = () => {
   };
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
+e.preventDefault();
+if(!stateAuth.user){
+  setError('You must be logged in')
+  return
+}
     const workouts = { ...values };
     const response = await fetch("http://localhost:4000/api/workouts/", {
       method: "POST",
       body: JSON.stringify(workouts),
       headers: {
-        "Content-type": "application/json",
+        "Content-type": "application/json; charset=utf-8",'Authorization': `Beared ${stateAuth.user?.token}`
       },
     });
 
@@ -55,33 +62,36 @@ const WorkoutForm = () => {
    
   };
   const handleEdit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+  e.preventDefault();
+
+ 
+
     const id = edit?.item?._id;
     const workouts = { ...values };
     const response = await fetch(`http://localhost:4000/api/workouts/${id}`, {
       method: "PATCH",
       body: JSON.stringify(workouts),
       headers: {
-        "Content-type": "application/json; charset=utf-8",
+        "Content-type": "application/json; charset=utf-8",'Authorization': `Beared ${stateAuth.user?.token}`
       },
     });
     const json = await response.json();
-
+          
     if(!values.title || !values.reps || !values.load){
       alert('Please input')
 
     } else {
       if (response.ok) {
         setValues(initialValues);
-        setEdit(null)
-        setCancelEdit(true)
-        
-        return json;
+     setEdit(null)
+return json;
+  
+
       
     }
      
     }
-   
+    setToggleEdit(true);
   };
 
   useEffect(() => {
@@ -94,6 +104,7 @@ const WorkoutForm = () => {
     } else {
       setValues(initialValues);
     }
+
   }, [edit ]);
 
   return (
@@ -127,10 +138,10 @@ const WorkoutForm = () => {
       />
 
       {edit ? (
-        <button type="submit" onClick={handleEdit}>
+        <button type="button" onClick={handleEdit}>
           Update
         </button>
-      ) : !edit ?  <button type="submit" onClick={handleSubmit}>
+      ) : !edit ?  <button type="button" onClick={handleSubmit}>
       Submit
     </button>: null
        

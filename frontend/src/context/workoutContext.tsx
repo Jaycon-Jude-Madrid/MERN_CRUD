@@ -18,6 +18,7 @@ const initialState: stateType = {
 };
 
 const reducer = (currentState: stateType, action: actionType) => {
+
   switch (action.type) {
     case "SET_WORKOUTS":
       return { workouts: action.payload };
@@ -31,10 +32,14 @@ const reducer = (currentState: stateType, action: actionType) => {
           (w: any) => w._id !== action.payload._id
         ),
       };
-      case "UPDATE_WORKOUTS":
-        return {
-          workouts: [action.payload, ...currentState.workouts],
-        };
+      case "UPDATE_WORKOUT":
+       
+      const newArray = [...currentState.workouts];
+      newArray[action.payload.index] = action.payload.value;
+
+      return {  ...currentState.workouts, workouts: newArray}
+
+      
     default:
       return currentState;
   }
@@ -45,12 +50,12 @@ export const WorkoutsContext = createContext<any>(null);
 export const WorksoutContextProvider = ({
   children,
 }: ThemeContextProviderProps) => {
+ 
   const [edit, setEdit] = useState<any>(null);
-  const [editCancel, setCancelEdit] = useState<boolean>(true);
 
   const [state, dispatch] = useReducer<any>(reducer, initialState);
   return (
-    <WorkoutsContext.Provider value={{ state, dispatch, edit, setEdit ,editCancel, setCancelEdit}}>
+    <WorkoutsContext.Provider value={{ state, dispatch, edit, setEdit }}>
       {children}
     </WorkoutsContext.Provider>
   );

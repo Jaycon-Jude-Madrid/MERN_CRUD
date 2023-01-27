@@ -1,30 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 interface ItemProps {
   item: any;
   fetchData: () => void;
 }
 const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
-  const { dispatch, setEdit, editCancel, setCancelEdit } = useWorkoutsContext();
-
+  
+  const [editCancel, setCancelEdit] = useState<boolean>(true);
+  const { dispatch, setEdit} = useWorkoutsContext();
+const {stateAuth} = useAuthContext();
   let createdDate = new Date(item.createdAt).toUTCString();
   createdDate = createdDate.split(" ").slice(0, 4).join(" ");
 
   const deleteData = async () => {
+
+    if(!stateAuth.user){
+      return
+    }
     const response = await fetch(
       "http://localhost:4000/api/workouts/" + item._id,
       {
         method: "DELETE",
+        headers: { 'Authorization': `Beared ${stateAuth.user?.token}`
       }
-    );
-    const jason = await response.json();
-
-    if (response.ok) {
-      dispatch({ type: "DELETE_WORKOUTS", payload: jason });
-      setEdit(null);
- 
     }
-    
+    );
+   
+    const json = await response.json();
+    if (response.ok) {
+      dispatch({ type: "DELETE_WORKOUTS", payload: json });
+     
+    }
   };
 
   const editData = async () => {
@@ -32,14 +39,18 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
       item,
     };
     setEdit(data);
-    setCancelEdit(!editCancel);
+    setCancelEdit(false)
+
+  
   };
 
   const cancelEdit = () => {
     setEdit(null);
-    setCancelEdit(!editCancel);
+    setCancelEdit(true);
   };
-  return (
+
+
+ return (
     <div className="workout-details">
       <h4>{item.title}</h4>
       <p>
@@ -51,9 +62,9 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
         <strong>Reps: </strong> {item.reps}
       </p>
       <p>{`${String(createdDate)}`}</p>
-      <span onClick={deleteData}> Delete</span>
-     
-     {editCancel ? <button
+      <span style={{borderRadius:'5px',color:'red'}} onClick={deleteData}> Delete</span>
+      {editCancel ? (
+        <button
           onClick={editData}
           style={{
             color: "green",
@@ -66,8 +77,8 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
         >
           {" "}
           Edit
-        </button> :   
-        <button
+        </button>
+      )  :   <button
       onClick={cancelEdit}
       style={{
         color: "red",
@@ -81,10 +92,7 @@ const WorkoutDetails = ({ item, fetchData }: ItemProps) => {
     >
       {" "}
       Cancel
-    </button> }
-        
-    
-  
+    </button>}
     </div>
   );
 };

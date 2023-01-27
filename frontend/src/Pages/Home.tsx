@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import WorkoutDetails from "../Components/WorkoutDetails";
 import WorkoutForm from "../Components/WorkoutForm";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 interface ItemProps {
   _id: string;
@@ -14,17 +15,31 @@ interface ItemProps {
 const Home = () => {
   const { state, dispatch ,edit} = useWorkoutsContext();
 
+
+  const {stateAuth} = useAuthContext();
+
+  
+
   const fetchData = async () => {
-    const res = await fetch("http://localhost:4000/api/workouts/");
+    const res = await fetch("http://localhost:4000/api/workouts/",{
+
+    headers: {
+      'Authorization': `Beared ${stateAuth.user?.token}`
+    }
+    });
     const val = await res.json();
-    if (res.ok) {
+    if (res.ok) { 
       dispatch({ type: "SET_WORKOUTS", payload: val });
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, [dispatch,edit]);
+    if(stateAuth.user){
+      fetchData();
+    }
+  
+ 
+  }, [dispatch,edit,stateAuth.user]);
 
   return (
     <div>
